@@ -1,9 +1,11 @@
-void setup() {
-  // put your setup code here, to run once:
+int led = 9;
+int brillo = 128;
 
+void setup() {
+  pinMode(led, OUTPUT);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
+  analogWrite(led, brillo);
+  delay(1000);
 }
