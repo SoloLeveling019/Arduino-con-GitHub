@@ -17,3 +17,4 @@ void loop() {
   estado = !estado;  // Cambiar estado para el próximo ciclo
   delay(1000);       // Esperar 1 segundo
 }
+WAZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
