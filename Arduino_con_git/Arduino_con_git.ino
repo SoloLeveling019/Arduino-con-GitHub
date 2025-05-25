@@ -1,21 +1,19 @@
-int led = 9;
-int brillo = 0;  // Comenzamos apagado
-bool estado = false; // Estado del LED, false = apagado, true = encendido
+int ledPin = 9;      // Pin PWM
 
 void setup() {
-  pinMode(led, OUTPUT);
+  pinMode(ledPin, OUTPUT);
 }
 
 void loop() {
-  if (estado) {
-    brillo = 255;  // Encender LED al máximo brillo
-  } else {
-    brillo = 0;    // Apagar LED
+  // Incrementa el brillo
+  for (int brightness = 0; brightness <= 255; brightness++) {
+    analogWrite(ledPin, brightness);  // Escribe valor PWM (0-255)
+    delay(10);                        // Pequeña pausa para ver el cambio
   }
 
-  analogWrite(led, brillo);
-  estado = !estado;  // Cambiar estado para el próximo ciclo
-  delay(1000);       // Esperar 1 segundo
+  // Disminuye el brillo
+  for (int brightness = 255; brightness >= 0; brightness--) {
+    analogWrite(ledPin, brightness);
+    delay(10);
+  }
 }
-WAZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-sale o nada 
