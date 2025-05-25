@@ -1,19 +1,19 @@
-int ledPin = 9;      // Pin PWM
+int led = 9;            // Pin conectado al LED
+int brillo = 0;         // Nivel inicial de brillo
+int paso = 5;           // Cuánto cambia el brillo por ciclo
 
 void setup() {
-  pinMode(ledPin, OUTPUT);
+  pinMode(led, OUTPUT); // Configura el pin como salida
 }
 
 void loop() {
-  // Incrementa el brillo
-  for (int brightness = 0; brightness <= 255; brightness++) {
-    analogWrite(ledPin, brightness);  // Escribe valor PWM (0-255)
-    delay(10);                        // Pequeña pausa para ver el cambio
+  analogWrite(led, brillo);  // Escribe el nivel PWM al LED
+  brillo += paso;            // Ajusta el brillo
+
+  // Cambia la dirección del brillo al llegar a los extremos
+  if (brillo <= 0 || brillo >= 255) {
+    paso = -paso;            // Invierte la dirección del cambio
   }
 
-  // Disminuye el brillo
-  for (int brightness = 255; brightness >= 0; brightness--) {
-    analogWrite(ledPin, brightness);
-    delay(10);
-  }
+  delay(30); // Controla la velocidad del efecto
 }
