@@ -18,3 +18,4 @@ void loop() {
   delay(1000);       // Esperar 1 segundo
 }
 WAZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+sale o nada 
