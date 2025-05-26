@@ -1,15 +1,5 @@
 #include <DHT.h>
 
-<<<<<<< Updated upstream
-#define DHTPIN 5      // Pin donde está conectado el sensor
-#define DHTTYPE DHT22 // Tipo de sensor
-
-DHT dht(DHTPIN, DHTTYPE);
-
-void setup() {
-  Serial.begin(9600);
-  Serial.println("Lectura de temperatura con DHT22");
-=======
 // Definir el pin donde está conectado el sensor DHT22
 #define DHTPIN 5     // Cambia este número al pin que estés usando
 
@@ -25,32 +15,10 @@ void setup() {
   Serial.println("Iniciando lectura de DHT22...");
   
   // Iniciar el sensor
->>>>>>> Stashed changes
   dht.begin();
 }
 
 void loop() {
-<<<<<<< Updated upstream
-  delay(2000); // Espera entre lecturas
-  
-  float temperaturaC = dht.readTemperature(); // Lectura en Celsius
-  // float temperaturaF = dht.readTemperature(true); // Para Fahrenheit
-
-  if (isnan(temperaturaC)) {
-    Serial.println("Error al leer la temperatura!");
-    return;
-  }
-
-  Serial.print("Temperatura: ");
-  Serial.print(temperaturaC);
-  Serial.println("°C");
-  
-  // Si quieres mostrar Fahrenheit también:
-  // Serial.print(" | ");
-  // Serial.print(temperaturaF);
-  // Serial.println("°F");
-}
-=======
   // Esperar entre lecturas (el DHT22 necesita al menos 2 segundos)
   delay(2000);
 
@@ -87,4 +55,3 @@ void loop() {
   Serial.print(hif);
   Serial.println("°F");
 }
->>>>>>> Stashed changes
