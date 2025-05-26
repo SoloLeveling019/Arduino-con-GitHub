@@ -1,57 +1,53 @@
-#include <DHT.h>
-
-// Definir el pin donde está conectado el sensor DHT22
-#define DHTPIN 5     // Cambia este número al pin que estés usando
-
-// Definir el tipo de sensor (DHT22)
-#define DHTTYPE DHT22
-
-// Inicializar el sensor DHT
-DHT dht(DHTPIN, DHTTYPE);
+// Giro a la derecha (sentido horario)
+#define STEPPER_PIN_1 9
+#define STEPPER_PIN_2 10
+#define STEPPER_PIN_3 11
+#define STEPPER_PIN_4 12
+int step_number = 0;
 
 void setup() {
-  // Iniciar comunicación serial
-  Serial.begin(9600);
-  Serial.println("Iniciando lectura de DHT22...");
-  
-  // Iniciar el sensor
-  dht.begin();
+  pinMode(STEPPER_PIN_1, OUTPUT);
+  pinMode(STEPPER_PIN_2, OUTPUT);
+  pinMode(STEPPER_PIN_3, OUTPUT);
+  pinMode(STEPPER_PIN_4, OUTPUT);
 }
 
 void loop() {
-  // Esperar entre lecturas (el DHT22 necesita al menos 2 segundos)
-  delay(2000);
+  OneStep(true);  // true = derecha (horario)
+  delay(2);
+}
 
-  // Leer humedad
-  float h = dht.readHumidity();
-  // Leer temperatura en Celsius
-  float t = dht.readTemperature();
-  // Leer temperatura en Fahrenheit (opcional)
-  float f = dht.readTemperature(true);
-
-  // Verificar si las lecturas fallaron
-  if (isnan(h) || isnan(t) || isnan(f)) {
-    Serial.println("Error al leer el sensor DHT22!");
-    return;
+void OneStep(bool dir){
+  if(dir){
+    switch(step_number){
+      case 0:
+        digitalWrite(STEPPER_PIN_1, HIGH);
+        digitalWrite(STEPPER_PIN_2, LOW);
+        digitalWrite(STEPPER_PIN_3, LOW);
+        digitalWrite(STEPPER_PIN_4, LOW);
+        break;
+      case 1:
+        digitalWrite(STEPPER_PIN_1, LOW);
+        digitalWrite(STEPPER_PIN_2, HIGH);
+        digitalWrite(STEPPER_PIN_3, LOW);
+        digitalWrite(STEPPER_PIN_4, LOW);
+        break;
+      case 2:
+        digitalWrite(STEPPER_PIN_1, LOW);
+        digitalWrite(STEPPER_PIN_2, LOW);
+        digitalWrite(STEPPER_PIN_3, HIGH);
+        digitalWrite(STEPPER_PIN_4, LOW);
+        break;
+      case 3:
+        digitalWrite(STEPPER_PIN_1, LOW);
+        digitalWrite(STEPPER_PIN_2, LOW);
+        digitalWrite(STEPPER_PIN_3, LOW);
+        digitalWrite(STEPPER_PIN_4, HIGH);
+        break;
+    } 
   }
-
-  // Calcular índice de calor (sensación térmica) en Celsius
-  float hic = dht.computeHeatIndex(t, h, false);
-  // Calcular índice de calor en Fahrenheit (opcional)
-  float hif = dht.computeHeatIndex(f, h);
-
-  // Mostrar los datos por el monitor serial
-  Serial.print("Humedad: ");
-  Serial.print(h);
-  Serial.print("%\t");
-  Serial.print("Temperatura: ");
-  Serial.print(t);
-  Serial.print("°C\t");
-  Serial.print(f);
-  Serial.print("°F\t");
-  Serial.print("Índice de calor: ");
-  Serial.print(hic);
-  Serial.print("°C\t");
-  Serial.print(hif);
-  Serial.println("°F");
+  step_number++;
+  if(step_number > 3){
+    step_number = 0;
+  }
 }
