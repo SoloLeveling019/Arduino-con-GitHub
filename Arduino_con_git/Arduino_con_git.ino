@@ -1,51 +1,59 @@
+#include <math.h>
+
+enum FadeState { RISING, FALLING, PAUSED };
+
 const byte LED_PIN = 9;
-const unsigned int FADE_INTERVAL = 10;
-const unsigned int PAUSE_DURATION = 500;
-const float GAMMA_VALUE = 2.2;
-const float FADE_STEP = 0.5;
+const unsigned long FADE_DURATION = 5100; // 255*10ms*2 (ida y vuelta)
+const unsigned long PAUSE_TIME = 500;
+const float GAMMA = 2.2;
 
-float brightness = 0.0;
-bool isIncreasing = true;
-bool isPaused = false;
-
-unsigned long previousTime = 0;
-unsigned long pauseStartTime = 0;
+FadeState state = RISING;
+unsigned long stateStartTime;
+unsigned long cycleStartTime;
 
 void setup() {
   pinMode(LED_PIN, OUTPUT);
+  stateStartTime = millis();
+  cycleStartTime = millis();
 }
 
 void loop() {
   unsigned long currentTime = millis();
-
-  handlePause(currentTime);
+  unsigned long elapsed = currentTime - stateStartTime;
   
-  if (!isPaused && (currentTime - previousTime >= FADE_INTERVAL)) {
-    updateBrightness(currentTime);
+  switch(state) {
+    case RISING:
+      updateBrightness(elapsed, true);
+      if (currentTime - cycleStartTime >= FADE_DURATION/2) {
+        state = PAUSED;
+        stateStartTime = currentTime;
+      }
+      break;
+      
+    case FALLING:
+      updateBrightness(elapsed, false);
+      if (currentTime - cycleStartTime >= FADE_DURATION) {
+        state = PAUSED;
+        stateStartTime = currentTime;
+        cycleStartTime = currentTime;
+      }
+      break;
+      
+    case PAUSED:
+      if (elapsed >= PAUSE_TIME) {
+        state = (state == RISING) ? FALLING : RISING;
+        stateStartTime = currentTime;
+      }
+      break;
   }
 }
 
-void handlePause(unsigned long now) {
-  if (isPaused && (now - pauseStartTime >= PAUSE_DURATION)) {
-    isPaused = false;
-  }
-}
-
-void updateBrightness(unsigned long now) {
-  previousTime = now;
+void updateBrightness(unsigned long elapsed, bool rising) {
+  float progress = (float)elapsed / (FADE_DURATION/2);
+  progress = constrain(progress, 0.0, 1.0);
   
-  // Aplicar corrección gamma
-  float gammaCorrected = pow(brightness / 255.0, GAMMA_VALUE) * 255.0;
-  analogWrite(LED_PIN, (int)gammaCorrected);
-
-  // Actualizar brillo
-  brightness += isIncreasing ? FADE_STEP : -FADE_STEP;
-
-  // Comprobar límites y cambiar dirección
-  if (brightness >= 255.0 || brightness <= 0.0) {
-    brightness = constrain(brightness, 0.0, 255.0);
-    isIncreasing = !isIncreasing;
-    isPaused = true;
-    pauseStartTime = now;
-  }
+  float brightness = rising ? progress * 255 : (1.0 - progress) * 255;
+  float corrected = pow(brightness/255.0, GAMMA) * 255;
+  
+  analogWrite(LED_PIN, (int)corrected);
 }
