@@ -1,7 +1,14 @@
 const int LED_PIN = 9;
-float brillo = 0, paso = 0.5;
-bool sube = true, pausa = false;
-unsigned long t0 = 0, pausaT0 = 0;
+float brillo = 0.0;
+float paso = 0.5;
+bool subiendo = true;
+bool enPausa = false;
+
+unsigned long tiempoAnterior = 0;
+unsigned long tiempoPausa = 0;
+
+const unsigned int intervalo = 10;
+const unsigned int duracionPausa = 500;
 const float gamma = 2.2;
 
 void setup() {
@@ -9,18 +16,25 @@ void setup() {
 }
 
 void loop() {
-  unsigned long t = millis();
-  if (pausa && t - pausaT0 >= 500) pausa = false;
+  unsigned long ahora = millis();
 
-  if (!pausa && t - t0 >= 10) {
-    t0 = t;
-    analogWrite(LED_PIN, pow(brillo / 255.0, gamma) * 255);
-    brillo += sube ? paso : -paso;
-    if (brillo >= 255 || brillo <= 0) {
-      brillo = constrain(brillo, 0, 255);
-      sube = !sube;
-      pausa = true;
-      pausaT0 = t;
+  if (enPausa && ahora - tiempoPausa >= duracionPausa) {
+    enPausa = false;
+  }
+
+  if (!enPausa && ahora - tiempoAnterior >= intervalo) {
+    tiempoAnterior = ahora;
+
+    float corregido = pow(brillo / 255.0, gamma) * 255.0;
+    analogWrite(LED_PIN, (int)corregido);
+
+    brillo += subiendo ? paso : -paso;
+
+    if (brillo >= 255.0 || brillo <= 0.0) {
+      brillo = constrain(brillo, 0.0, 255.0);
+      subiendo = !subiendo;
+      enPausa = true;
+      tiempoPausa = ahora;
     }
   }
 }
