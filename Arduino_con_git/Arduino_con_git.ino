@@ -7,27 +7,21 @@ DHT dht(DHTPIN, DHTTYPE);
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("Lectura de temperatura con DHT22");
+  Serial.println("Lectura de humedad con DHT22");
   dht.begin();
 }
 
 void loop() {
   delay(2000); // Espera entre lecturas
   
-  float temperaturaC = dht.readTemperature(); // Lectura en Celsius
-  // float temperaturaF = dht.readTemperature(true); // Para Fahrenheit
+  float humedad = dht.readHumidity();
 
-  if (isnan(temperaturaC)) {
-    Serial.println("Error al leer la temperatura!");
+  if (isnan(humedad)) {
+    Serial.println("Error al leer la humedad!");
     return;
   }
 
-  Serial.print("Temperatura: ");
-  Serial.print(temperaturaC);
-  Serial.println("°C");
-  
-  // Si quieres mostrar Fahrenheit también:
-  // Serial.print(" | ");
-  // Serial.print(temperaturaF);
-  // Serial.println("°F");
+  Serial.print("Humedad: ");
+  Serial.print(humedad);
+  Serial.println("%");
 }
