@@ -32,7 +32,7 @@ void loop() {
 
     if (brillo >= 255.0 || brillo <= 0.0) {
       brillo = constrain(brillo, 0.0, 255.0);
-      subiendo = !subiendo;
+      subiendo = !subiendo
       enPausa = true;
       tiempoPausa = ahora;
     }
