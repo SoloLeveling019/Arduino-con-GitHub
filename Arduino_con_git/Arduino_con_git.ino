@@ -1,26 +1,51 @@
-const int LED_PIN = 9;
-float brillo = 0, paso = 0.5;
-bool sube = true, pausa = false;
-unsigned long t0 = 0, pausaT0 = 0;
-const float gamma = 2.2;
+const byte LED_PIN = 9;
+const unsigned int FADE_INTERVAL = 10;
+const unsigned int PAUSE_DURATION = 500;
+const float GAMMA_VALUE = 2.2;
+const float FADE_STEP = 0.5;
+
+float brightness = 0.0;
+bool isIncreasing = true;
+bool isPaused = false;
+
+unsigned long previousTime = 0;
+unsigned long pauseStartTime = 0;
 
 void setup() {
   pinMode(LED_PIN, OUTPUT);
 }
 
 void loop() {
-  unsigned long t = millis();
-  if (pausa && t - pausaT0 >= 500) pausa = false;
+  unsigned long currentTime = millis();
 
-  if (!pausa && t - t0 >= 10) {
-    t0 = t;
-    analogWrite(LED_PIN, pow(brillo / 255.0, gamma) * 255);
-    brillo += sube ? paso : -paso;
-    if (brillo >= 255 || brillo <= 0) {
-      brillo = constrain(brillo, 0, 255);
-      sube = !sube;
-      pausa = true;
-      pausaT0 = t;
-    }
+  handlePause(currentTime);
+  
+  if (!isPaused && (currentTime - previousTime >= FADE_INTERVAL)) {
+    updateBrightness(currentTime);
+  }
+}
+
+void handlePause(unsigned long now) {
+  if (isPaused && (now - pauseStartTime >= PAUSE_DURATION)) {
+    isPaused = false;
+  }
+}
+
+void updateBrightness(unsigned long now) {
+  previousTime = now;
+  
+  // Aplicar corrección gamma
+  float gammaCorrected = pow(brightness / 255.0, GAMMA_VALUE) * 255.0;
+  analogWrite(LED_PIN, (int)gammaCorrected);
+
+  // Actualizar brillo
+  brightness += isIncreasing ? FADE_STEP : -FADE_STEP;
+
+  // Comprobar límites y cambiar dirección
+  if (brightness >= 255.0 || brightness <= 0.0) {
+    brightness = constrain(brightness, 0.0, 255.0);
+    isIncreasing = !isIncreasing;
+    isPaused = true;
+    pauseStartTime = now;
   }
 }
