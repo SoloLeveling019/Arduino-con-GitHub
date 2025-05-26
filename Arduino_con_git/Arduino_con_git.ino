@@ -1,7 +1,7 @@
 #include <DHT.h>
 
 // Definir el pin donde está conectado el sensor DHT22
-#define DHTPIN 5     // Cambia este número al pin que estés usando
+#define DHTPIN 2     // Cambia este número al pin que estés usando
 
 // Definir el tipo de sensor (DHT22)
 #define DHTTYPE DHT22
